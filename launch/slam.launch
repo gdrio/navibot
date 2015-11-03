@@ -1,5 +1,17 @@
 <?xml version="1.0"?>
 <launch>
+<!--hokuyo node-->
+   <node name="hokuyo" pkg="hokuyo_node" type="hokuyo_node" respawn="false" output="screen">
+   <param name="frame_id" value="base_laser_link" />
+   <param name="calibrate_time" type="bool" value="true"/> 
+   <param name="port" type="string" value="/dev/ttyACM0"/> 
+   <param name="intensity" type="bool" value="false"/>
+   <param name="min_ang" value="-2.086213"/>   
+   <param name="max_ang" value="2.092349"/>    
+   <param name="cluster" value="1"/>
+   </node>
+
+<!--amcl node-->
   <param name="/use_sim_time" value="false" />
   <arg name="use_map_topic" default="false"/>
   <arg name="scan_topic" default="scan"/>
@@ -44,4 +56,15 @@
     <param name="recovery_alpha_fast" value="0.0"/>
     <remap from="scan" to="$(arg scan_topic)"/>
   </node>
+
+<!--move_base node-->
+ <param name="/use_sim_time" value="false" />
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find youbot_navigation_common)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find youbot_navigation_common)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find youbot_navigation_local)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find youbot_navigation_global)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find youbot_navigation_common)/config/base_local_planner_params.yaml" command="load" />
+  </node>
+
 </launch>
